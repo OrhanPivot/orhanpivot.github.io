@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pivot Yayıncılık | Dijital Eğitim Paneli</title>
+    <style>
+        :root {
+            --pivot-dark: #2c3e50;
+            --pivot-orange: #e67e22;
+            --pivot-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: var(--pivot-bg);
+            scroll-behavior: smooth;
+        }
+
+        /* Navbar Tasarımı */
+        nav {
+            background: var(--pivot-dark);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .logo span { color: var(--pivot-orange); }
+
+        .nav-links button {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 15px;
+            margin-left: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-links button:hover {
+            background: var(--pivot-orange);
+            border-color: var(--pivot-orange);
+        }
+
+        .btn-fill {
+            background: var(--pivot-orange) !important;
+            border: none !important;
+            font-weight: bold;
+        }
+
+        /* Hero Bölümü */
+        .hero {
+            height: 400px;
+            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.8)), 
+                        url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        /* Optik Form Alanı */
+        .form-section {
+            max-width: 800px;
+            margin: -50px auto 50px;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .optik-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .q-number {
+            width: 40px;
+            font-weight: bold;
+            color: var(--pivot-dark);
+        }
+
+        .bubble {
+            width: 35px;
+            height: 35px;
+            border: 2px solid #bdc3c7;
+            border-radius: 50%;
+            margin: 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .bubble:hover { background: #f0f0f0; border-color: var(--pivot-dark); }
+        
+        .bubble.selected {
+            background: var(--pivot-dark);
+            color: white;
+            border-color: var(--pivot-dark);
+        }
+
+        footer {
+            background: var(--pivot-dark);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">PIVOT<span>YAYINCILIK</span></div>
+    <div class="nav-links">
+        <button onclick="alert('Sınav Takvimi Yakında!')">Sınavlar</button>
+        <button onclick="alert('Dijital Kütüphane Hazırlanıyor...')">Kitaplar</button>
+        <button class="btn-fill" onclick="document.getElementById('optik-basla').scrollIntoView()">FORM DOLDUR</button>
+    </div>
+</nav>
+
+<section class="hero">
+    <h1>Eğitimin Pivot Noktası</h1>
+    <p>Dijital deneme sınavları ve yeni nesil soru bankaları ile yanınızdayız.</p>
+</section>
+
+<div class="form-section" id="optik-basla">
+    <h2 style="text-align:center; color: var(--pivot-dark);">Cevap Kağıdı Paneli</h2>
+    <div id="questions-container">
+        </div>
+    <div style="text-align:center; margin-top:30px;">
+        <button class="btn-fill" style="padding:15px 40px; border-radius:30px; cursor:pointer;" onclick="finishExam()">SINAVI BİTİR</button>
+    </div>
+</div>
+
+<footer>
+    &copy; 2026 Pivot Yayıncılık | Geleceği Pivot Edin.
+</footer>
+
+<script>
+    const container = document.getElementById('questions-container');
+    const letters = ['A', 'B', 'C', 'D', 'E'];
+
+    // 10 Soru Oluşturma
+    for (let i = 1; i <= 10; i++) {
+        const row = document.createElement('div');
+        row.className = 'optik-row';
+        
+        let html = `<div class="q-number">${i}</div>`;
+        letters.forEach(letter => {
+            html += `<div class="bubble" onclick="selectBubble(this)">${letter}</div>`;
+        });
+        
+        row.innerHTML = html;
+        container.appendChild(row);
+    }
+
+    function selectBubble(el) {
+        // Aynı satırdaki diğer seçimleri temizle
+        const parent = el.parentElement;
+        parent.querySelectorAll('.bubble').forEach(b => b.classList.remove('selected'));
+        // Tıklananı seç
+        el.classList.add('selected');
+    }
+
+    function finishExam() {
+        const selections = document.querySelectorAll('.selected').length;
+        alert(`Sınav tamamlandı! Toplam ${selections} soru işaretlediniz.`);
+    }
+</script>
+
+</body>
+</html>
