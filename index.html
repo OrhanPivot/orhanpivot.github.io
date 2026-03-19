@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>ATAK Borsa</title>
+    <style>
+        body { background: #121212; color: #ffffff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; padding: 20px; }
+        h1 { color: #f39c12; margin-bottom: 5px; }
+        
+        /* Haber Bandı Stili */
+        #newsTicker { width: 800px; background: #c0392b; color: white; padding: 10px; font-weight: bold; text-align: center; border-radius: 5px; margin-bottom: 20px; font-size: 18px; min-height: 24px; transition: background 0.3s;}
+        .news-positive { background: #27ae60 !important; }
+        .news-negative { background: #c0392b !important; }
+        .news-neutral { background: #2980b9 !important; }
+
+        .dashboard { display: flex; gap: 40px; margin-bottom: 20px; background: #1e1e1e; padding: 20px; border-radius: 10px; border: 1px solid #333; width: 760px; justify-content: space-between; }
+        .stats-box { text-align: center; }
+        .stats-box span { display: block; font-size: 24px; font-weight: bold; margin-top: 5px; }
+        
+        #price { font-size: 36px; font-weight: bold; margin: 10px 0; }
+        .up { color: #2ecc71; }
+        .down { color: #e74c3c; }
+        
+        canvas { border: 1px solid #444; background: #000000; border-radius: 5px; }
+        
+        .controls { margin-top: 20px; display: flex; gap: 20px; }
+        button { padding: 15px 30px; font-size: 18px; font-weight: bold; cursor: pointer; border: none; border-radius: 5px; transition: transform 0.1s; }
+        button:active { transform: scale(0.95); }
+        #buyBtn { background-color: #27ae60; color: white; }
+        #sellBtn { background-color: #c0392b; color: white; }
+    </style>
+</head>
+<body>
+
+    <h1>ATAKCOIN PİYASA</h1>
+    
+    <div id="newsTicker" class="news-neutral">Piyasa sakin, işlemler normal seyrinde devam ediyor...</div>
+    
+    <div class="dashboard">
+        <div class="stats-box">Nakit Bakiye <span id="balanceDisplay">1000.00 TL</span></div>
+        <div class="stats-box">Hisse Adedi <span id="sharesDisplay">0</span></div>
+        <div class="stats-box">Toplam Varlık <span id="totalDisplay">1000.00 TL</span></div>
+    </div>
+
+    <div id="price" class="up">100.00 TL</div>
+    <canvas id="stockChart" width="800" height="300"></canvas>
+
+    <div class="controls">
+        <button id="buyBtn" onclick="buyStock()">AL (1 Adet)</button>
+        <button id="sellBtn" onclick="sellStock()">SAT (1 Adet)</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('stockChart');
+        const ctx = canvas.getContext('2d');
+        const priceDisplay = document.getElementById('price');
+        const newsTicker = document.getElementById('newsTicker');
+        
+        let balance = 1000.00;
+        let shares = 0;
+        let prices = [100]; 
+        let currentPrice = 100.00;
+
+        // Sahte Haberler ve Fiyata Etkileri (Yüzdelik)
+        const newsDatabase = [
+            { text: "🚀 Şirket CEO duyurdu! Hisse fırladı!", effect: 0.35, type: 'news-positive' },
+            { text: "🔥 Merkez bankası faizleri sıfırladı, piyasaya para yağıyor!", effect: 0.20, type: 'news-positive' },
+            { text: "💰 Şirket devasa bir ihaleyi kazandı!", effect: 0.15, type: 'news-positive' },
+            { text: "📉 Büyük bir balina tüm hisselerini sattı! Piyasa çöküyor!", effect: -0.25, type: 'news-negative' },
+            { text: "🚨 CEO'nun kaderinde var!", effect: -0.15, type: 'news-negative' },
+            { text: "💥 Fabrikada yangın çıktı, üretim durdu!", effect: -0.30, type: 'news-negative' },
+            { text: "🤔 Şirket yeni bir logo tasarımı deniyor, yatırımcılar kararsız.", effect: 0.02, type: 'news-neutral' }
+        ];
+
+        function updateDashboard() {
+            document.getElementById('balanceDisplay').innerText = balance.toFixed(2) + " TL";
+            document.getElementById('sharesDisplay').innerText = shares;
+            let totalValue = balance + (shares * currentPrice);
+            document.getElementById('totalDisplay').innerText = totalValue.toFixed(2) + " TL";
+        }
+
+        function buyStock() {
+            if (balance >= currentPrice) { balance -= currentPrice; shares += 1; updateDashboard(); } 
+            else { alert("Paran yetmiyor kanka!"); }
+        }
+
+        function sellStock() {
+            if (shares > 0) { balance += currentPrice; shares -= 1; updateDashboard(); } 
+            else { alert("Elinde hisse yok!"); }
+        }
+
+        // Rastgele Haber Üretici (Her 15 Saniyede Bir)
+        function generateNews() {
+            let randomNews = newsDatabase[Math.floor(Math.random() * newsDatabase.length)];
+            
+            // Haberi ekrana yazdır ve rengini ayarla
+            newsTicker.innerText = "SON DAKİKA: " + randomNews.text;
+            newsTicker.className = randomNews.type;
+
+            // Haberin etkisini fiyata yansıt (Örn: %30 artış veya azalış)
+            let changeAmount = currentPrice * randomNews.effect;
+            applyPriceChange(changeAmount);
+            
+            // 5 saniye sonra haberi sıfırla
+            setTimeout(() => {
+                newsTicker.innerText = "Piyasa haberleri bekleniyor...";
+                newsTicker.className = "news-neutral";
+            }, 7000);
+        }
+
+        // Fiyatı Değiştirme ve Çizim İşlemleri
+        function applyPriceChange(changeAmount) {
+            currentPrice += changeAmount;
+            if(currentPrice < 1) currentPrice = 1.00; // Şirket batmasın, 1 TL'de tutalım
+
+            prices.push(currentPrice);
+            if(prices.length > 80) prices.shift(); 
+
+            draw();
+            priceDisplay.innerText = currentPrice.toFixed(2) + " TL";
+            priceDisplay.className = changeAmount >= 0 ? 'up' : 'down';
+            updateDashboard();
+        }
+
+        // Standart Dalgalanma (5 saniyede bir, -%3 ile +%3 arası rastgele)
+        function updateStock() {
+            let randomPercent = (Math.random() * 0.06) - 0.03; 
+            let change = currentPrice * randomPercent;
+            applyPriceChange(change);
+        }
+
+        // Dinamik Grafik Çizici (Fiyat 10000 de olsa, 1 de olsa ekrana sığar)
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Grafiği ölçeklemek için en yüksek ve en düşük fiyatı bul
+            let maxP = Math.max(...prices);
+            let minP = Math.min(...prices);
+            let padding = (maxP - minP) * 0.2; // Alt ve üstten biraz boşluk bırak
+            if (maxP === minP) { maxP += 10; minP -= 10; } // Başlangıç hatasını önle
+
+            let highest = maxP + padding;
+            let lowest = minP - padding;
+            if (lowest < 0) lowest = 0;
+
+            ctx.strokeStyle = '#222';
+            ctx.lineWidth = 1;
+            for(let i=0; i<300; i+=50) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(800, i); ctx.stroke(); }
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#f39c12'; 
+            ctx.lineWidth = 3;
+
+            for(let i = 0; i < prices.length; i++) {
+                let x = i * 10;
+                // Fiyatı canvas yüksekliğine göre oranla
+                let y = canvas.height - ((prices[i] - lowest) / (highest - lowest)) * canvas.height;
+                
+                if(i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+
+        // Başlangıç tetiklemeleri
+        updateDashboard();
+        draw();
+        
+        // Zamanlayıcılar (Normal değişim 5 saniye, Haberler 15 saniyede bir)
+        setInterval(updateStock, 5000);
+        setInterval(generateNews, 15000); 
+
+    </script>
+</body>
+</html>
