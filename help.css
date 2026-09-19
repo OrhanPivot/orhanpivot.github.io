@@ -65,3 +65,12 @@ span.bottom {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: larger;
 }
+div.help {
+    font-size: large;
+}
+h2.help {
+    margin-left: 30px;
+}
+span.help {
+    margin-left: 30px;
+}

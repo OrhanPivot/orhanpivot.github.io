@@ -65,3 +65,28 @@ span.bottom {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: larger;
 }
+div.main {
+    font-size: large;
+}
+h2.main {
+    margin-left: 30px;
+}
+p.main {
+    font-size: larger;
+    margin-left: 50px;
+}
+a.main:hover {
+    color: wheat;
+}
+footer.footer {
+    background-color: maroon;
+    text-align: center;
+    position: fixed;
+    bottom: 25px;
+    left: 0;
+    width: 100%;
+}
+span.footer {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: large;
+}

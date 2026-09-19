@@ -72,7 +72,7 @@ li.rel#last {
 }
 li.rel#last::before {
     content: "★ ";
-    color: #f7f6f8;
+    color: white;
 }
 a:hover {
     color: wheat;

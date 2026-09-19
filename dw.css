@@ -69,6 +69,13 @@ button.main {
 button.main:hover {
     background-color: rgb(57, 57, 255);
 }
+li.rel#last {
+    list-style: none;
+}
+li.rel#last::before {
+    content: "★ ";
+    color: white;
+}
 footer {
     background-color: green;
     position: fixed;
