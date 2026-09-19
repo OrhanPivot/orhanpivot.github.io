@@ -62,12 +62,12 @@ h2 {
 h3.virustotal {
     margin-left: 20px;
 }
+a:hover {
+    color: wheat;
+}
 a.virustotal {
     background-color: rgb(185, 68, 0);
     color: white;
-}
-a:hover {
-    color: wheat;
 }
 button.main {
     background-color: blue;
