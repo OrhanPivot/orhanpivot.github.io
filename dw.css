@@ -59,6 +59,13 @@ div.main {
 h2 {
     margin-left: 30px;
 }
+h3.virustotal {
+    margin-left: 20px;
+}
+a.virustotal {
+    background-color: rgb(185, 68, 0);
+    color: white;
+}
 a:hover {
     color: wheat;
 }
